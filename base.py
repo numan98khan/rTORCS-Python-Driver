@@ -43,3 +43,14 @@ class MySensorModel():
 		self.racePosition = carstate.race_position
 		self.wheelSpinVelocity = carstate.wheel_velocities
 		self.message = ""
+
+class HeuristicDriver():
+
+    def __init__(self):
+        self.stage = None
+        self.trackName = ""
+
+        self.WARMUP = 0
+        self.QUALIFYING = 1
+        self.RACE = 2
+        self.UNKNOWN = None
