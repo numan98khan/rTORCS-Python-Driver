@@ -54,3 +54,43 @@ class HeuristicDriver():
         self.QUALIFYING = 1
         self.RACE = 2
         self.UNKNOWN = None
+
+		        # /* Gear Changing Constants*/
+        self.gearUp = [5000, 6000, 6000, 6500, 7000, 0]
+        self.gearDown = [0, 2500, 3000, 3000, 3500, 3500]
+
+        # /* Stuck constants*/
+        self.stuckTime = 25
+        self.stuckAngle = 0.523598775
+
+        # /* Accel and Brake Constants*/
+        self.maxSpeedDist = 70
+        self.maxSpeed = 150
+        self.sin5 = 0.08716
+        self.cos5 = 0.99619
+
+        # /* Steering constants*/
+        self.steerLock = 0.366519
+        self.steerSensitivityOffset = 80.0
+        self.wheelSensitivityCoeff = 1
+
+        # /* ABS Filter Constants */
+        self.wheelRadius = [0.3306, 0.3306, 0.3276, 0.3276]
+        self.absSlip = 2.0
+        self.absRange = 3.0
+        self.absMinSpeed = 3.0
+
+        # clutching constant
+        self.clutchMax = 0.5
+        self.clutchDelta =  0.05
+        self.clutchRange =  0.82
+        self.clutchDeltaTime = 0.02
+        self.clutchDeltaRaced = 10
+        self.clutchDec =  0.01
+        self.clutchMaxModifier = 1.3
+        self.clutchMaxTime =  1.5
+
+        self.stuck = 0
+
+        # current clutch
+        self.clutch = 0
