@@ -150,3 +150,14 @@ class HeuristicDriver():
                 return gear - 1
             else:  # otherwhise keep current gear
                 return gear
+
+	def getSteer(self, sensors):
+        #  steering angle is compute by correcting the actual car angle w.r.t. to track
+        #  axis [sensors.getAngle()] and to adjust car position w.r.t to middle of track [sensors.getTrackPos()*0.5]
+        targetAngle = float(sensors.getAngleToTrackAxis() -
+                            sensors.getTrackPosition()*0.5)
+        #  at high speed reduce the steering command to avoid loosing the control
+        if (sensors.getSpeed() > self.steerSensitivityOffset):
+            return float(targetAngle/(self.steerLock*(sensors.getSpeed()-self.steerSensitivityOffset)*self.wheelSensitivityCoeff))
+        else:
+            return (targetAngle)/self.steerLock
