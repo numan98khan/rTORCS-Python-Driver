@@ -162,6 +162,71 @@ class HeuristicDriver():
         else:
             return (targetAngle)/self.steerLock
 
+	def getAccel(self, sensors):
+        #  checks if car is out of track
+        if (sensors.getTrackPosition() < 1 and sensors.getTrackPosition() > -1):
+            #  reading of sensor at +5 degree w.r.t. car axis
+            rxSensor = float(sensors.getTrackEdgeSensors()[10])
+            #  reading of sensor parallel to car axis
+            sensorsensor = float(sensors.getTrackEdgeSensors()[9])
+            #  reading of sensor at -5 degree w.r.t. car axis
+            sxSensor = float(sensors.getTrackEdgeSensors()[8])
+
+            targetSpeed = 0.0
+
+            #  track is straight and enough far from a turn so goes to max speed
+            if (sensorsensor > self.maxSpeedDist or (sensorsensor >= rxSensor and sensorsensor >= sxSensor)):
+                targetSpeed = self.maxSpeed
+            else:
+                #  approaching a turn on right
+                if(rxSensor > sxSensor):
+                    #  computing approximately the "angle" of turn
+                    h = sensorsensor*self.sin5
+                    b = rxSensor - sensorsensor*self.cos5
+                    sinAngle = b*b/(h*h+b*b)
+                    #  estimate the target speed depending on turn and on how close it is
+                    targetSpeed = self.maxSpeed * \
+                        (sensorsensor*self.sinAngle/self.maxSpeedDist)
+                else:
+                    #  computing approximately the "angle" of turn
+                    h = sensorsensor*self.sin5
+                    b = sxSensor - sensorsensor*self.cos5
+                    sinAngle = b*b/(h*h+b*b)
+                    #  estimate the target speed depending on turn and on how close it is
+                    targetSpeed = self.maxSpeed * \
+                        (sensorsensor*sinAngle/self.maxSpeedDist)
+
+            #  accel/brake command is exponentially scaled w.r.t. the difference between target speed and current one
+            return float(2/(1+math.exp(sensors.getSpeed() - targetSpeed)) - 1)
+        else:
+            #  when out of track returns a moderate acceleration command
+            return float(0.3)	
+
+	def filterABS(self, sensors, brake):
+        #  convert speed to m/s
+        speed = float(sensors.getSpeed() / 3.6)
+        #  when spedd lower than min speed for abs do nothing
+        if (speed < absMinSpeed):
+            return brake
+
+        #  compute the speed of wheels in m/s
+        slip = 0.0
+        for i in range(0, 4):
+            wheelsSpeed = sensors.getWheelSpinVelocity()[i] * self.wheelRadius[i]
+            slip += wheelsSpeed
+
+        #  slip is the difference between actual speed of car and average speed of wheels
+        slip = speed - slip/4.0
+        #  when slip too high applu ABS
+        if (slip > absSlip):
+            brake = brake - (slip - absSlip)/absRange
+  
+        #  check brake is not negative, otherwise set it to zero
+        if (brake < 0):
+            return 0
+        else:
+            return brake
+
 	def clutching(self, sensors, clutch): 
         maxClutch = self.clutchMax
 
