@@ -94,3 +94,40 @@ class HeuristicDriver():
 
         # current clutch
         self.clutch = 0
+
+	def getStage(self):
+        return self.stage
+
+    def setStage(self, stage):
+        self.stage = stage
+
+    def getTrackName(self):
+        return self.trackName
+
+    def setTrackName(self, trackName):
+        self.trackName = trackName
+
+    def reset(self):
+        print("Restarting the race!")
+
+    def shutdown(self):
+        self.myPara.setDamage(damage)
+        self.myPara.setTotalTime(totalTime)
+
+	def initAngles(self):
+        angles = [0.0] * 19
+
+        # /* set angles as {-90,-75,-60,-45,-30,-20,-15,-10,-5,0,5,10,15,20,30,45,60,75,90} */
+
+        for i in range(0, 5):
+        # for (int i=0 i<5 i++)
+            angles[i] = -90+i*15
+            angles[18-i] = 90-i*15
+
+        for i in range(5, 9):
+        # for (int i=5 i<9 i++)
+            angles[i] = -20+(i-5)*5
+            angles[18-i] = 20-(i-5)*5
+
+        angles[9] = 0
+        return angles
