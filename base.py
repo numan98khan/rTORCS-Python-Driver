@@ -131,3 +131,22 @@ class HeuristicDriver():
 
         angles[9] = 0
         return angles
+
+	def getGear(self, sensors):
+        gear = sensors.getGear()
+        rpm = sensors.getRPM()
+
+        #  if gear is 0 (N) or -1 (R) just return 1
+        if (gear < 1):
+            return 1
+        #  check if the RPM value of car is greater than the one suggested
+        #  to shift up the gear from the current one
+        if (gear < 6 and rpm >= gearUp[gear-1]):
+            return gear + 1
+        else:
+        	#  check if the RPM value of car is lower than the one suggested
+        	#  to shift down the gear from the current one
+            if (gear > 1 and rpm <= gearDown[gear-1]):
+                return gear - 1
+            else:  # otherwhise keep current gear
+                return gear
