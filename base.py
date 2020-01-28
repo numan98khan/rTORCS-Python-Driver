@@ -161,3 +161,36 @@ class HeuristicDriver():
             return float(targetAngle/(self.steerLock*(sensors.getSpeed()-self.steerSensitivityOffset)*self.wheelSensitivityCoeff))
         else:
             return (targetAngle)/self.steerLock
+
+	def clutching(self, sensors, clutch): 
+        maxClutch = self.clutchMax
+
+    #    Check if the current situation is the race start
+        if (sensors.getCurrentLapTime()<self.clutchDeltaTime  and self.getStage()==self.RACE and sensors.getDistanceRaced()<clutchDeltaRaced):
+            clutch = maxClutch
+
+        delta = 0.0
+        #  Adjust the current value of the clutch
+        if(clutch > 0):
+            delta = clutchDelta
+            if (sensors.getGear() < 2):
+                #  Apply a stronger clutch output when the gear is one and the race is just started
+                delta /= 2
+                maxClutch *= clutchMaxModifier
+            if (sensors.getCurrentLapTime() < clutchMaxTime):
+                clutch = maxClutch
+		
+
+        #  check clutch is not bigger than maximum values
+        clutch = min(maxClutch, clutch)
+
+        #  if clutch is not at max value decrease it quite quickly
+        if (clutch != maxClutch):
+            clutch -= delta
+            clutch = max(0.0, clutch)
+		
+        #  if clutch is at max value decrease it very slowly
+        else:
+            clutch -= clutchDec
+
+        return clutch
