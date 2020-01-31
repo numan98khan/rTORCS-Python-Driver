@@ -44,6 +44,34 @@ class MySensorModel():
 		self.wheelSpinVelocity = carstate.wheel_velocities
 		self.message = ""
 
+class Action():
+
+    def __init__(self):
+        self.accelerate = 0
+        self.brake = 0
+        self.clutch = 0
+        self.gear = 0
+        self.steering = 0
+        self.restartRace = False
+        self.focus = 360
+
+    def toString(self):
+        self.limitValues()
+        meta = 0
+        if (self.restartRace):
+            meta = 1
+        else:
+            meta = 0
+
+        return "(accel " + str(self.accelerate) + ") " + "(brake " + str(self.brake) + ") " + "(clutch " + str(self.clutch) + ") " + "(gear " + str(self.gear) + ") " + "(steer " + str(self.steering) + ") " + "(meta " + str(meta) + ") " + "(focus " + str(self.focus) + ")"
+
+    def limitValues(self):
+        self.accelerate = max(0, min(1, self.accelerate))
+        self.brake = max(0, min(1, self.brake))
+        self.clutch = max(0, min(1, self.clutch))
+        self.steering = max(-1, min(1, self.steering))
+        self.gear = max(-1, min(6, self.gear))
+
 class HeuristicDriver():
 
     def __init__(self):
